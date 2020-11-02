@@ -1,0 +1,137 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+      "data": {
+      "url": "https://raw.githubusercontent.com/marinadeletic/FIT3179/main/time_day.csv"},
+  "hconcat":[{
+    "layer":[
+      {
+      "selection": {
+        "day_highlight":{
+          "type":"multi",
+          "fields": ["weekday"],
+          "bind":"legend",
+          "on": "click", 
+          "clear": "dblclick"
+          }
+      },
+      "mark": "bar",
+      "encoding": {
+        "x": {
+          "field": "weekday",
+          "title":"Day",
+          "type": "ordinal",
+          "sort":["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+          "axis":{"labelFontSize":12}
+          },
+        "y": {
+          "aggregate": "average", 
+          "field": "n"},
+        "size":{"value":10},
+        "color":{
+          "field":"weekday", 
+          "scale": {
+            "scheme": "category20b", 
+            "domain":["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+            "range":["#2b2a66","#3f3e92","#5856c3","#8a89d6","#b2b1fa","#51682c","#7a9341"]}},
+        "opacity": {
+          "condition": [
+            {"selection": "day_highlight", "value": 1}],
+          "value": 0.2},
+          "tooltip":[
+          {"title":"Day","field":"weekday"},
+          {"title":"Average Useage","field":"n","aggregate":"average", "format":".2d"}]
+        },
+        "width":360,
+        "height":400
+      },
+          {
+      "mark": "circle",
+      "encoding": {
+        "x": {
+          "field": "weekday",
+          "sort":["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},
+        "y": {
+          "aggregate": "average", 
+          "field": "n",
+          "title":"Average Usage"},
+        "size":{"value":500},
+        "color":{"field":"weekday"},
+        "tooltip":[
+          {"title":"Day","field":"weekday"},
+          {"title":"Average Useage","field":"n","aggregate":"average", "format":".2d"}],
+          "opacity": {
+          "condition": [
+            {"selection": "day_highlight", "value": 1}],
+          "value": 0.2}
+        }
+      }]
+    },
+    {
+      "width":550,
+      "height":400,
+    "layer":[
+      {
+      "selection": {
+        "day_highlight":{
+          "type":"multi",
+          "fields": ["weekday"],
+          "on": "click", 
+          "clear": "dblclick"
+          }
+      },
+      "mark": {"type":"line","interpolate":"basis"},
+      "encoding": {
+        "x": {
+          "field": "starttime",
+          "type": "quantitative",
+          "sort":"x",
+          "title":"Hour of Day (24h)",
+          "axis":{"labelFontSize":12}
+          },
+        "y": {
+          "aggregate": "average", 
+          "field": "n",
+          "title": "Average Usage"},
+        "size":{"value":2},
+        "color":{
+          "field":"weekday", 
+          "type": "ordinal",
+          "title":"Day",
+          "sort":["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+          "legend":{"titleFontSize": 14,"titleFontWeight": "bold","titleFontStyle":"italic",
+              "labelFontSize":12}
+          },
+        "opacity": {
+          "condition": {
+            "selection": "day_highlight", 
+            "value": 1},
+          "value": 0.2},
+        "tooltip":[{"title":"Day","field":"weekday"}]
+        }
+      },
+      {
+        "data":{ "values":{"morning":8}},
+        "mark":"rule",
+        "encoding": {
+          "x":{"field":"morning", "type":"quantitative"},
+          "size":{"value":45},
+          "opacity":{"value":0.2},
+          "color":{"value":"lightgrey"}
+          }
+      },
+          {
+        "data":{ "values":{"evening":17.5}},
+        "mark":"rule",
+        "encoding": {
+          "x":{"field":"evening", "type":"quantitative"},
+          "size":{"value":45},
+          "opacity":{"value":0.2},
+          "color":{"value":"lightgrey"}
+          }
+      }
+      ],
+      "resolve": {"axis": {"x":"shared"}}
+      }
+  
+    ]
+}

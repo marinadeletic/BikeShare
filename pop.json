@@ -1,0 +1,106 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+  "description": "A population pyramid for the US in 2000.",
+  "data": { "url": "https://raw.githubusercontent.com/marinadeletic/CitiBike/main/data/pop.csv"},
+  "transform": [
+    {"calculate": "datum.gender == 2 ? 'Female' : 'Male'", "as": "sex"},
+    {
+    "window": [{
+      "op": "sum",
+      "field": "n",
+      "as": "TotalTime"
+    }],
+    "frame": [null, null]
+  },
+  {
+    "calculate": "datum.n/datum.TotalTime * 100",
+    "as": "PercentOfTotal"
+  }],
+
+  "spacing": 0,
+  "hconcat": [{
+    "height":400,
+    "width":500,
+    "transform": [{"filter": {"field": "sex", "equal": "Female"}}],
+    "title": "Female",
+    "mark": "bar",
+    "encoding": {
+      "y": {
+        "field": "age_group",
+        "type": "ordinal", 
+        "axis": null, 
+        "sort": "descending"
+      },
+      "x": {
+        "aggregate": "sum", 
+        "field": "PercentOfTotal",
+        "title": "Percent of Total Riders(%)",
+        "axis": {"format": "s", "labelFontSize":12},
+        "sort": "descending",
+        "scale": {"domain": [0, 25]}
+      },
+      "color": {
+        "field": "gender",
+        "scale": {"range": ["#675193", "#ca8861"]},
+        "legend": null
+      },
+     "tooltip":[{"field":"age_bin", "title":"Age Group"},
+     {"aggregate": "sum", 
+        "field": "PercentOfTotal",
+        "title": "Percent of Total Riders(%)","format": ".2d"}]
+    }
+  }, 
+  {
+    "width": 20,
+    "height":400,
+    "view": {"stroke": null},
+    "mark": {
+      "type": "text",
+      "align": "center"
+    },
+    "encoding": {
+      "y": {
+        "field": "age_group", 
+        "type": "ordinal", 
+        "axis": null, 
+        "sort": "descending"},
+      "text": {
+        "field": "age_bin", 
+        "type": "ordinal"}
+    }
+  }, 
+  {
+    "height":400,
+    "width":500,
+    "transform": [{
+      "filter": {"field": "sex", "equal": "Male"}
+    }],
+    "title": "Male",
+    "mark": "bar",
+    "encoding": {
+      "y": {
+        "field": "age_group", "title": null,
+        "axis": null, "sort": "descending"
+      },
+      "x": {
+        "aggregate": "sum", 
+        "field": "PercentOfTotal",
+        "title": "Percent of Total Riders(%)",
+        "axis": {"format": "s", "labelFontSize":12},
+        "scale": {"domain": [0, 25]}
+      },
+      "color": {
+        "field": "gender",
+        "legend": null
+      },
+     "tooltip":[{"field":"age_bin", "title":"Age Group"},
+     {"aggregate": "sum", 
+        "field": "PercentOfTotal",
+        "title": "Percent of Total Riders(%)","format": ".2d"}]
+    }
+  }],
+  "config": {
+    "view": {"stroke": null},
+    "axis": {"grid": false}
+  }
+}

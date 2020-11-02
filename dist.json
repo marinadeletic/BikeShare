@@ -1,0 +1,98 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+  "data": {
+    "url": "https://raw.githubusercontent.com/marinadeletic/CitiBike/main/data/Dist.csv"
+  },
+  "vconcat": [
+    {
+      "encoding": {
+        "x": {
+          "field": "T",
+          "title":"Daily Temperature (°C)",
+          "type": "quantitative",
+          "scale":{"domain":[16,26]},
+          "axis":{"tickMinStep":1, "grid": false,"labelFontSize":12}
+        },
+        "y": {
+          "field": "D",
+          "title":"Average Distance (km)",
+          "type": "quantitative",
+          "scale":{"domain":[1.55,1.95]}
+        },
+        "color": {
+            "condition": {
+            "selection": "brush",
+              "field": "P",
+              "title":"Percipitation (mm)",
+              "type": "quantitative",
+              "scale": {
+                "type": "threshold",
+                "domain": [1, 10],
+                "range":["#8dc787","#a1d6d4","#7986ab"] 
+              },
+        "legend":{"titleFontSize": 14,"titleFontWeight": "bold","titleFontStyle":"italic",
+              "labelFontSize":12}
+            },
+            "value":"lightgrey"
+            
+        },
+        "opacity":{"value":1},
+        "size":{
+          "field": "H",
+          "title":"Humidity (%)",
+          "type": "quantitative",
+          "scale": {
+                "type": "threshold", 
+                "domain": [50, 70], 
+                "range":[80,300,800]},
+        "legend":{"titleFontSize": 14,"titleFontWeight": "bold","titleFontStyle":"italic",
+              "labelFontSize":12}
+              },
+        "tooltip":[
+          {"field":"D","title":"Distance (km)", "format":".2f"},
+          {"field":"T","title":"Temperature (°C)", "format":".1f"},
+          {"field":"P","title":"Percipitation (mm)", "format":".2d"},
+          {"field":"H","title":"Humidity (%)", "format":".2d"}]
+          },
+      "width": 500,
+      "height": 300,
+      "mark": "point",
+      "selection": {
+        "brush": {"encodings": ["x"], "type": "interval"}}
+    },
+    {
+      "hconcat":[
+      {
+        "title":"Average Temperature (°C)",
+        "encoding": {
+          "x":{
+            "aggregate":"mean",
+            "field":"T",
+            "scale":{"domain":[16,25]},
+            "title":null
+            },
+        "color":{"value":"purple"}
+        },
+        "mark":"bar",
+        "transform": [{"filter": {"selection": "brush"}}],
+        "width":237
+      },
+      {
+        "title":"Average Distance (km)",
+        "encoding": {
+          "x":{
+            "aggregate":"mean",
+            "field":"D",
+            "scale":{"domain":[1.6,1.9]},
+            "title":null
+            },
+        "color":{"value":"lightgreen"}
+        },
+        "mark":"bar",
+        "transform": [{"filter": {"selection": "brush"}}],
+        "width":237
+      }]
+    }
+    ]
+}
+
