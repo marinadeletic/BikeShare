@@ -1,0 +1,212 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(broom)
+library(gridExtra)
+library(MASS) 
+library(kableExtra)
+```
+
+-clip manhattan.geojson
+-clip target=manhattan bbox=-74.025,40.7,-73.9,40.889
+
+```{r}
+data<-read.csv("Data/201906-citibike.csv")
+
+data%>%head()
+data$starttime[1]
+```
+
+```{r}
+data%>%nrow()
+data$start.station.latitude%>%max()
+data$start.station.latitude%>%min()
+data_clean<-data%>%filter(start.station.latitude>40.7, start.station.latitude<40.88,
+              start.station.longitude>-74.025,start.station.longitude<-73.907,
+              end.station.latitude>40.7, end.station.longitude<40.88,
+              end.station.longitude>-74.025,end.station.longitude<-73.9288,gender!=0)%>%
+  dplyr::select(-c(bikeid,usertype,birth.year,stoptime))
+  
+```
+
+
+```{r}
+write.csv(data_clean, file="citibike-clean.csv")
+```
+
+
+
+```{r}
+stations<-data_clean%>% group_by(start.station.id,start.station.name,start.station.latitude,start.station.longitude)%>%count()%>%arrange(-n)
+stations<-stations%>%rename(name=start.station.name, latitude= start.station.latitude,longitude = start.station.longitude, id=start.station.id)
+```
+```{r}
+stations<-stations%>% filter(!id %in% c(3532,3530,3524,3525,3526,3514,3515,3513,3523,3528,3512,3621,3517,3522,3619,3516,3610,3612,3614,3721,3617,3616,3691,3609,3607,3583,3589,3591,3605,3602,3662,3592,3586,3593,3598,3577,3595,3646,3575,3567,3597,3565,3564,3566,3573,3572,3568,3559,3563,3745,3570,3557,3560,3562,3554,3716,3130,3556,3555,3129,3620,3128,3618,3127,3615,3126,3125,3123,3124,3121,3221,3704,3611,3612,3122,3606,3647,3726,3119,3608,3588,3603,3561,3654,3613,3117,3118,3116,3115,3112,3469,3113,282,2005,217,2000,414,418,3674,216,3790))
+
+remove<- stations %>% filter(longitude > -73.966959 & latitude <40.728792)
+
+stations<-subset(stations,!(stations$id %in% remove$id))
+```
+
+
+```{r}
+write.csv(stations,file = "stations.csv")
+```
+
+```{r}
+stations%>% ggplot(aes(n))+geom_histogram(bins=50)+geom_vline(xintercept = 1500)+geom_vline(xintercept = 3000)
+#stations%>% ggplot(aes(n))+geom_density()+geom_vline(xintercept = 1500)+geom_vline(xintercept = 3000)
+```
+do classification - 0-1500, 1500-3000,3000-800
+
+
+
+   {
+          "mark": { "type": "text"},
+        "encoding": {"text": {"field": "id", "type": "quantitative"}}
+        }
+        
+
+
+```{r}
+data_clean<- data_clean%>% filter(start.station.id %in% stations$id)%>% filter(end.station.id %in% stations$id)
+```
+
+
+```{r}
+data_clean<-data_clean%>%mutate(st_sp = paste(sprintf("%04d",start.station.id),"_",sprintf("%04d",end.station.id)))
+flow <- count(data_clean, vars=st_sp)%>% mutate(start.id = as.integer(substr(vars,1,4)), end.id=as.integer(substr(vars,8,12)))%>%filter(start.id !=end.id)%>% filter(end.id!=0)%>% dplyr::select(start.id,end.id,n)
+
+flow1<- merge(x=flow,y=stations, by.x="start.id", by.y = "id", all.x = TRUE)%>% rename(start_name = name,start_latitude = latitude, start_longitude = longitude)
+flow2<- merge(x=flow1,y=stations,by.x="end.id",by.y="id", all.x = TRUE)%>% rename(end_name = name,end_latitude = latitude, end_longitude = longitude)
+
+flows_final<- flow2%>% dplyr::select(start.id,start_name,start_latitude,start_longitude, end.id,end_name,end_latitude,end_longitude,n.x)%>% rename(n=n.x,end_id=end.id,start_id= start.id)
+```
+
+```{r}
+flows_final%>% ggplot()+geom_histogram(aes(x=n),binwidth = 10)
+
+flows_final<- flows_final%>%filter(n>10)%>% arrange(n)
+```
+
+```{r}
+write.csv(flows_final,file = "flow_10.csv")
+```
+
+        
+```{r}
+ggplot(data_clean,aes(weekday))+geom_bar()
+```
+
+
+```{r}
+
+time_day<- data_clean%>% group_by(weekday,starttime)%>%count()
+time_day<-time_day%>% mutate(
+  weekday_no=ifelse(weekday =="Mon",1,
+                    ifelse(weekday=="Tue",2,
+                           ifelse(weekday=="Wed",3,
+                                  ifelse(weekday=="Thu",4,
+                                         ifelse(weekday=="Fri",5,
+                                                ifelse(weekday=="Sat",6,
+                                                       ifelse(weekday=="Sun",7,NA))))))))
+
+
+```
+
+```{r}
+write.csv(time_day,"time_day.csv")
+```
+
+```{r}
+
+data_clean
+
+data_clean_a<- data_clean%>% filter(Age<95)
+
+data_clean_a$age_group<-(cut(data_clean_a$Age, breaks=c(10,20, 30, 40, 50,60,70,80,90), right = FALSE, labels = FALSE)*10+10)
+
+pop<-data_clean_a%>% group_by(gender,age_group)%>%count()%>%filter(!is.na(age_group))
+pop<-pop%>% mutate(age_bin=sprintf("%d-%d",age_group-10,age_group))
+
+
+
+```
+
+
+
+
+```{r}
+write.csv(pop,"pop.csv")
+```
+
+
+```{r}
+weather_data<-read.csv("data/201906-Weather.csv")
+weather_data$day<-as.integer(sub("\\/.*", "", weather_data$June))
+
+
+day_data<- data_clean%>% group_by(day)%>%count()
+data_clean%>% group_by(day)%>%summarise(mean(dist))
+
+data_clean%>% filter(is.na(dist))
+
+day_data<-merge(x=day_data,y=weather_data, x.by=day,y.by=day)%>%dplyr::select(-June)
+
+
+a<-merge(x=data_clean, y=weather_data, x.by=day,y.by=day, all.x=TRUE)
+
+
+```
+
+
+
+```{r}
+library(geosphere)
+library(geodist)
+startX<- data.frame(long = a$start.station.longitude, lat= a$start.station.latitude)
+endX<- data.frame(long = a$end.station.longitude, lat= a$end.station.latitude)
+a$dist<-geodist(startX,endX, paired = TRUE)/1000
+
+day_data<-a
+```
+
+
+```{r}
+Dist_data<- day_data%>%group_by(day)%>%summarise(D=mean(dist),T=mean(Temperature....C.), P=mean(Precipitation..mm.),H=mean(Humidity....),n=n())
+
+Dist_data%>%ggplot()+geom_point(aes(x=T,y=D, colour=P))
+```
+
+
+```{r}
+Dist_data%>%ggplot(aes(H))+geom_histogram()
+
+Dist_data%>%summary(H)
+```
+
+
+
+
+
+```{r}
+write.csv(Dist_data,"Dist.csv")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
