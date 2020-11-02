@@ -11,7 +11,7 @@
         "min": 10,
         "max": 200,
         "step": 10,
-        "name": "Minumum number times traveled"
+        "name": "Minimum number times traveled"
       }
     }
   ],
