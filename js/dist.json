@@ -1,7 +1,7 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
   "data": {
-    "url": "https://raw.githubusercontent.com/marinadeletic/CitiBike/main/data/Dist.csv"
+    "url": "https://raw.githubusercontent.com/marinadeletic/BikeShare/main/data/Dist.csv"
   },
   "vconcat": [
     {
