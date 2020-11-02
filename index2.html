@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<title>NYC BikeShare</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open Sans">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@4"></script>
+  <!-- Import vega-embed -->
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+  <!-- Import pure.css -->
+  <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+<style>
+h1,h2,h3,h4,h5,h6 {font-family: "Oswald"}
+body {font-family: "Open Sans";
+       background-color: #d5f5f4;
+     }
+    .page{
+       width: 1200px;    
+       background-color: white;   
+       margin: auto;
+       padding: 50px;
+       padding-top: 35px;
+    }
+    .vis-container{
+      width: 100%;
+    }
+    .description h6{
+      margin-top:10px;
+    }
+    .pure-g{
+      padding-top: 50px;
+    }
+    .description em1 {
+        color: #8dc787;
+        font-weight: bold;
+}
+    .description em2 {
+        color: #7986ab;
+        font-weight: bold;
+    }
+    .description em3 {
+        color: #3a6567;
+        font-weight: bold;
+    }
+    .description em4 {
+        color: #3a6567;
+        font-weight: bold;}
+    .description em5 {
+        color: #7a9341;
+        font-weight: bold;}
+
+</style>
+<body>
+
+  
+
+<div class="page">
+  <!-- Header -->
+<header class="w3-display-container w3-content w3-wide" style="max-width:1500px;" id="home">
+  <img class="w3-image" src="https://qns.com/wp-content/uploads/2020/06/concrete-bridge-2760856-1200x764-1.jpg" alt="Architecture" width="1200" height="400">
+  <div class="w3-display-middle w3-margin-top w3-center">
+    <h1 class="w3-xxlarge w3-text-white"><span class="w3-padding w3-black w3-opacity-min"><b>NYC BIKE SHARE - June 2019</b></span> <span class="w3-hide-small w3-text-light-grey"></span></h1>
+  </div>
+</header>
+
+<div class="w3-container w3-padding-32 w3-center">
+    <h6>New York city is a densely populated city that’s among the world’s major commercial, financial and cultural centers.<br>Its iconic sites include skyscrapers such as the Empire State Building and sprawling Central Park. <br>The city is riddled with a bikeshare stations that help New Yorkers and the thousands of tourists flock to the <br>city in the summer months get around the city. This visulaisation takes a closer look at the BikeSharing system. </h6>
+    </div>
+<!-- Header End -->    
+
+<!-- Prop_symb -->
+    <div class="pure-g">
+        <div class="pure-u-2-5">
+          <div class="description description-left">
+            <h2>Where are people embarking? </h2>
+            <p>With hundreds of stations across Manhattan, the map shows how different stations and areas of the city vary in useage. <br> <br>Upper Manhattan saw <em1>low</em1> station useage while middle Manhattan stations had <em2>high</em2> volumes of traffic. This trend is likely due to Middle Manhattan being the home of Times Square, Broadway and many of the cities tourist attractions. The West side also experienced higher traffic than the East. <br> <br>Stations around Central Park have a higher number of uses compared to those around Upper Manhattan that are not adjacent to the park. <br> <br>For a more in-depth exploration of New York City and its attractions visit <a href="https://www.nyctourist.com/map1.htm">NYC Tourist.</a></p>
+            </div>
+
+        </div>
+        <div class="pure-u-3-5">
+          <div id="prop_s" class="vis-container"></div>
+        </div>
+    </div>  
+    
+<!-- flow_map -->
+    
+    <div >
+        <div class="description description-left">
+            <h2>What are Popular Routes?</h2>
+            <p>While stations tell us where people embark on their journeys, it is interesting to understand the <em3>popular routes</em3> people in New York take. It is unsurprising that middle and lower Manhattan experience more popular routes than those in Upper Manhattan. However what we can see is that the most popular routes include through Central Park, between Perishing Square and middle Manhattan as well as along the South West Side. </p>
+          </div>
+          <div id="flow" class="vis-container" style="text-align:center"></div>
+
+    </div>
+    
+    
+<!-- Time -->
+    <div >
+        <div class="description description-left">
+            <h2>When are people traveling?</h2>
+            <p>Day of week and time of day play a role in the number of people traveling. Wednesday's had the highest average usage in June, with Tuesday and Thursday following close behind. While Monday's and Sunday's had the lowest usage. The <em4>weekdays</em4> saw a very clear useage pattern each day, useage would pick up for the morning rush hour, drop and plateau and then pickup higher than the morning for the evening rush hour. The <em5>weekends</em5> saw a much more gradual increase over the day peaking in the afternoon.</p>
+        </div>
+        <div id="time" class="vis-container" width="1000"></div>
+    </div>
+    
+<!-- Weather and Dist  -->
+    <div class="pure-g">
+        <div class="pure-u-2-5">
+          <div class="description description-left">
+            <h2>The Influence of Weather </h2>
+            <p>It was expected that there would be some variation in the average distance traveled on a day given the weather. The graph illustrates that cold days see lower average distance traveled. <br><br>Precipitation (rain) did not appear to have a large impact on the distance traveled however this may be due to relativley small amounts of rain experienced during June. <br><br>Generally the less humid days saw higher average distances traveled.</p>
+          </div>
+        </div>
+        <div class="pure-u-3-5">
+          <div id="dist" class="vis-container"></div>
+        </div>
+    </div>
+    
+
+<!-- population -->
+    
+    <div >
+        <div class="description description-left">
+            <h2>Who's riding?</h2>
+            <p>An analysis of the population of riders shows that a lower portion of riders are females. Those between the ages of 20-40 are the greatest number of riders. Males between the age of 30-40 are the largest portion of the bike sharing population in New York City making up 23% of the ridership.  </p>
+          </div>
+          <div id="pop" class="vis-container" style="text-align:center"></div>
+    </div>
+
+</div>
+    
+    
+    
+<script type="text/javascript">
+  var specVis1= "js/PropSyb_map.json";
+  var specVis2 = "js/flow_map.json";
+  var specVis3 = "js/time.json";
+  var specVis4 = "js/dist.json";
+  var specVis5 = "js/pop.json";
+
+  vegaEmbed('#prop_s', specVis1, {"actions": false}).then(function(result) {
+    // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
+  }).catch(console.error);
+  
+   vegaEmbed('#flow', specVis2, {"actions": false}).then(function(result) {
+    // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
+  }).catch(console.error);
+
+  vegaEmbed('#time', specVis3, {"actions": false}).then(function(result) {
+    // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
+  }).catch(console.error);
+
+  vegaEmbed('#dist', specVis4, {"actions": false}).then(function(result) {
+    // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
+  }).catch(console.error);
+
+  vegaEmbed('#pop', specVis5, {"actions": false}).then(function(result) {
+    // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
+  }).catch(console.error);
+</script>
+
+  
+
+</body>
+</html>
